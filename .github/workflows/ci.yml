@@ -7,32 +7,15 @@ on:
     branches: [ master ]
 
 jobs:
-  test_without_babel:
+  test:
 
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v2
-    - name: Use Node.js 12.x
-      uses: actions/setup-node@v1
+    - name: Use Python
+      uses: actions/setup-python@v1
       with:
-        node-version: 12.x
-    - run: yarn
-    - run: yarn test
-      env:
-        CI: true
-  
-  test_with_babel:
-
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js 12.x
-      uses: actions/setup-node@v1
-      with:
-        node-version: 12.x
-    - run: yarn
-    - run: yarn run jest
-      env:
-        CI: true
+        python-version: 3.6
+    - run: wget https://worksheets.codalab.org/rest/bundles/0xa65a22f7b41e446ea09b0dbcff12334d/contents/blob/camelyon17_split%3Atest_seed%3A0_epoch%3Abest_pred.csv
+    - run: curl --insecure -vvI https://worksheets.codalab.org/rest/bundles/0xa65a22f7b41e446ea09b0dbcff12334d/contents/blob/camelyon17_split%3Atest_seed%3A0_epoch%3Abest_pred.csv 2>&1 | awk 'BEGIN { cert=0 } /^\* SSL connection/ { cert=1 } /^\*/ { if (cert) print }'
