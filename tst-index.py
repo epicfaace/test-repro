@@ -53,6 +53,12 @@ class BytesBuffer(BytesIO):
     def __bool__(self):
         return True
 
+    def peek(self, size: int):
+        b = bytearray()
+        for i in range(0, min(size, len(self.__buf))):
+            b.extend(self.__buf[i])
+        return bytes(b)[:size]
+    
 
 class GzipStream(BytesIO):
     """A stream that gzips a file in chunks.
