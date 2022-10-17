@@ -7,32 +7,21 @@ on:
     branches: [ master ]
 
 jobs:
-  test_without_babel:
-
+  test:
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        size: [1G,10G,100G]
     steps:
     - uses: actions/checkout@v2
-    - name: Use Node.js 12.x
-      uses: actions/setup-node@v1
+    - name: Use Python
+      uses: actions/setup-python@v1
       with:
-        node-version: 12.x
-    - run: yarn
-    - run: yarn test
+        python-version: 3.10.7
+    - run: pip install indexed-gzip
+    - run: fallocate -l $SIZE temp_file
+    #- run: head -c $SIZE </dev/urandom >temp_file
       env:
-        CI: true
-  
-  test_with_babel:
-
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js 12.x
-      uses: actions/setup-node@v1
-      with:
-        node-version: 12.x
-    - run: yarn
-    - run: yarn run jest
-      env:
-        CI: true
+        SIZE: ${{ matrix.size }}
+    #- run: gzip -k temp_file
+    - run: python tst-index.py
